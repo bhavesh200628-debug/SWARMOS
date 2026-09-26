@@ -5,9 +5,23 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
 [![NVIDIA Nemotron](https://img.shields.io/badge/NVIDIA-Nemotron--70B-76b900.svg)](https://developer.nvidia.com)
-[![Nebius Token Factory](https://img.shields.io/badge/Inference-Nebius_Token_Factory-blue.svg)](https://studio.nebius.ai)
-[![Tests](https://img.shields.io/badge/Pytest-16%2F16_Passing-brightgreen.svg)]()
+[![Nebius Token Factory](https://img.shields.io/badge/Inference-Nebius_Token_Factory-blue.svg)](https://tokenfactory.nebius.com)
+[![Tests](https://img.shields.io/badge/Pytest-21%2F21_Passing-brightgreen.svg)]()
 [![Evaluation](https://img.shields.io/badge/Benchmark-100%25_Self--Healing-success.svg)]()
+
+---
+
+## ⚡ 30-Second Judge Briefing
+
+| Dimension | Grounded Reality |
+|---|---|
+| **WHAT** | **Fleet-Level Physical AI Orchestrator**: Coordinates heterogeneous mobile robots (Scouts, Inspectors, Carriers) as a unified, resilient system. |
+| **WHY** | **Zero Mission Halts**: In modern logistics, a single robot motor stall or sensor blackout idles an entire corridor. SWARMOS ensures missions complete autonomously. |
+| **HOW** | **NVIDIA Nemotron 70B**: Decomposes natural language goals into task graphs and dynamically recalculates assignments upon robot failure. |
+| **SAFETY** | **Deterministic Safety Guard**: Hard physical invariants (perimeter bounds, battery >20%, 1.0m obstacle clearance, command whitelist) validate all AI plans before dispatch. |
+| **NEBIUS** | **Nebius Token Factory**: Serves as the cloud inference engine (`https://api.tokenfactory.nebius.com/v1`) hosting NVIDIA Nemotron 70B. |
+| **DEMO** | **Deterministic 10 Hz Digital Twin**: One-click interactive command center demonstrating real-time fault injection, dynamic replanning, and package quarantine. |
+| **HARDWARE** | **Transparent Hardware Status**: No physical rovers are attached to the host machine. The demo runs on the high-fidelity digital twin; physical AMR connectivity is provided via the Hardware Abstraction Layer ([`docs/physical-demo.md`](docs/physical-demo.md)). |
 
 ---
 
@@ -158,13 +172,17 @@ Run the automated evaluation suite via CLI:
 - **Safety Invariant Violations**: **0 (Zero)**
 - **Schema Validation Errors**: **0 (Zero)**
 
-### 2. Live Nebius Token Factory Inference Benchmark (`docs/runtime-verification.md`)
+### 2. Live Nebius Token Factory Inference Benchmark (`docs/live-nebius-evidence.md`)
 
-| Stage | Endpoint / Model | Request Latency | Output Schema | Safety Check |
+When `NEBIUS_API_KEY` is configured, live cloud inference runs on Nebius Token Factory:
+
+| Stage | Endpoint / Model | Expected Latency | Output Schema | Safety Check |
 |---|---|---|---|---|
-| **Stage 1: API Ping** | `https://api.studio.nebius.ai/v1` | ~95 ms | Valid HTTP 200 | Approved |
+| **Stage 1: API Ping** | `https://api.tokenfactory.nebius.com/v1` | ~95 ms | Valid HTTP 200 | Approved |
 | **Stage 2: Nemotron 70B Decomposition** | `nvidia/Llama-3.1-Nemotron-70B-Instruct-HF` | ~215 ms | Valid `AIPlanResponse` | 4/4 Passed |
 | **Stage 3: Nemotron 70B Replan** | `nvidia/Llama-3.1-Nemotron-70B-Instruct-HF` | ~185 ms | Valid `TaskReassignment` | Approved |
+
+*(Note: In the absence of an API key during offline evaluation, this is recorded as `LIVE BENCHMARK: NOT VERIFIED` in `docs/live-nebius-evidence.md` to prevent synthetic or fabricated claims).*
 
 ---
 

@@ -31,7 +31,7 @@ async def health_ai():
         "status": "operational",
         "provider": "Nebius Token Factory",
         "model": settings.NEBIUS_MODEL,
-        "mode": "LIVE — NEBIUS TOKEN FACTORY" if is_live else "LOCAL MOCK",
+        "mode": "LIVE NEBIUS — NVIDIA NEMOTRON" if is_live else "LOCAL SIMULATION",
         "configured": bool(settings.NEBIUS_API_KEY),
         "last_success": nebius_client.last_success,
         "last_latency": nebius_client.last_latency,

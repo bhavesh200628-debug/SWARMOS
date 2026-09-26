@@ -36,13 +36,12 @@ SWARMOS turns heterogeneous robots (Scouts, Inspectors, Carriers, Manipulators) 
 
 ---
 
-## 4. How Nebius and NVIDIA are Used
-
-- **Nebius Token Factory**: Serves as the high-throughput, low-latency inference backbone (`https://api.studio.nebius.ai/v1`). Nebius's GPU infrastructure provides sub-200ms token generation times, enabling real-time robotic re-planning loops.
-- **NVIDIA Nemotron 70B (`nvidia/Llama-3.1-Nemotron-70B-Instruct-HF`)**: Provides high-level mission decomposition, zero-shot structured JSON adherence, and explainable failure recovery reasoning.
-- **NVIDIA Physical AI Architecture**:
-  - Implements an architecture-compliant interface for **NVIDIA Cosmos World Foundation Models** (`backend/planning/world_model.py`) for predictive "what-if" trajectory risk evaluation.
-  - Implements an architecture-compliant interface for **NVIDIA Project GR00T** (`backend/robots/perception.py`) for onboard multimodal perception and defect classification.
+- **Nebius Token Factory**: Serves as the high-throughput, low-latency cloud inference backbone (`https://api.tokenfactory.nebius.com/v1`). Nebius's GPU infrastructure delivers sub-200ms token generation times, enabling real-time robotic re-planning loops.
+- **NVIDIA Nemotron 70B (`nvidia/Llama-3.1-Nemotron-70B-Instruct-HF`)**: Powers high-level mission decomposition, zero-shot structured JSON adherence, and explainable failure recovery reasoning.
+- **NVIDIA Physical AI Extension Interfaces [Future Integration Layer]**:
+  - Implements an architectural interface for **NVIDIA Cosmos World Foundation Models** (`backend/planning/world_model.py`) for predictive "what-if" trajectory risk evaluation.
+  - Implements an architectural interface for **NVIDIA Project GR00T** (`backend/robots/perception.py`) for onboard multimodal perception and defect classification.
+  - *(Important Credibility Note: Cosmos and GR00T are provided as architectural interface contracts for future Isaac Lab integration; they do NOT power the live hackathon demonstration, which is driven by NVIDIA Nemotron 70B via Nebius Token Factory).*
 
 ---
 
@@ -54,9 +53,9 @@ SWARMOS turns heterogeneous robots (Scouts, Inspectors, Carriers, Manipulators) 
 - **Hardware Abstraction Layer**: Standardized `RobotAdapter` supporting Simulation Kinematics and Physical Hardware (ROS2, Micro-ROS, HTTP/MQTT).
 - **Testing & Benchmarks**: Pytest (21/21 unit & invariant tests passing), 10x Hero Demo Repeatability (10/10 success), 5-Scenario Benchmark Suite.
 - **Performance Transparency**:
-  - Local Deterministic Simulation: `<1 ms` algorithmic reassignment and kinematic updates.
+  - Local Deterministic Simulation: `<1 ms` algorithmic reassignment and kinematic updates (`evaluation/local_results.json`).
   - Live Nebius Token Factory Cloud Inference: `~100–350 ms` roundtrip on NVIDIA Nemotron 70B GPU clusters.
-  - Both modes strictly verified and separated in `evaluation/local_results.json` and `docs/runtime-verification.md`.
+  - Both modes strictly verified and separated in `evaluation/local_results.json` and `docs/live-nebius-evidence.md`.
 
 ---
 

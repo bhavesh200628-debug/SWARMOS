@@ -13,22 +13,33 @@ The core breakthrough is **Self-Healing Swarm Orchestration**: when physical rob
 
 ```mermaid
 flowchart TD
-    NL["User Natural Language Mission"] --> Planner["Mission Planner"]
-    Planner --> NebiusClient["Nebius Token Factory API\n(api.studio.nebius.ai/v1)"]
-    NebiusClient --> Nemotron["NVIDIA Nemotron 70B\n(nvidia/Llama-3.1-Nemotron-70B-Instruct-HF)"]
-    Nemotron --> Decomp["Structured Task Graph (JSON)\nDependencies & Capabilities"]
-    Decomp --> SafetyGuard["Deterministic Safety Guard\n(Bounds, Battery, Collisions, Whitelist)"]
-    SafetyGuard --> Allocator["Multi-Criteria Task Allocator\n(Proximity, SoC, Capabilities, Workload)"]
-    Allocator --> HAL["Hardware Abstraction Layer (HAL)"]
-    HAL --> Sim["Simulation AMR Engine\n(Kinematics, 10Hz Tick, Grid)"]
-    HAL --> Phys["Physical Robot Bridge\n(ROS2 / REST / Micro-ROS)"]
-    Sim --> Telemetry["Telemetry Broadcaster\n(WebSockets @ 5-10Hz)"]
-    Phys --> Telemetry
-    Telemetry --> UI["Command Center UI\n(Digital Twin, Fleet HUD, Decision Timeline)"]
-    Sim -- Subsystem Anomaly --> Detector["Autonomous Failure Detector"]
-    Detector --> FailMgr["Failure Manager"]
-    FailMgr --> NebiusClient
-    Nemotron -- Dynamic Replan --> SafetyGuard
+    subgraph LIVE_PIPELINE ["LIVE RUNTIME SUBSYSTEMS (ACTIVE IN DEMO)"]
+        NL["User Mission Prompt"] --> Planner["SWARMOS Mission Planner [LIVE]"]
+        Planner --> NebiusClient["Nebius Token Factory Client [LIVE]\n(api.tokenfactory.nebius.com/v1)"]
+        NebiusClient --> Nemotron["NVIDIA Nemotron 70B [LIVE]\n(nvidia/Llama-3.1-Nemotron-70B-Instruct-HF)"]
+        Nemotron --> Decomp["Structured Task Graph [LIVE]\n(Pydantic JSON Schema Validation)"]
+        Decomp --> SafetyGuard["Deterministic Safety Guard [LIVE]\n(Perimeter Bounds, Battery >20%, Collision Margin, Whitelist)"]
+        SafetyGuard --> Allocator["Multi-Criteria Task Allocator [LIVE]\n(Affinity 0.35, Distance 0.30, SoC 0.20, Load 0.15)"]
+        Allocator --> Sim["10 Hz Kinematic Simulation Engine [LIVE]\n(Differential Drive AMRs, Dynamic Cargo, Battery Decay)"]
+        Sim --> Telemetry["WebSockets Telemetry Broadcaster [LIVE]\n(Real-Time 10 Hz Pose & Status Sync)"]
+        Telemetry --> UI["Command Center UI & Digital Twin [LIVE]\n(React 19, TypeScript, Canvas Twin, Explainable Timeline)"]
+        Sim -- Injected Fault --> Detector["Autonomous Failure Detector [LIVE]"]
+        Detector --> FailMgr["Failure Manager [LIVE]"]
+        FailMgr --> NebiusClient
+        Nemotron -- Self-Healing Replan --> SafetyGuard
+    end
+
+    subgraph EXTENSION_INTERFACES ["OPTIONAL / ARCHITECTURAL INTERFACE LAYER"]
+        Cosmos["NVIDIA Cosmos WFM Interface [OPTIONAL / INTERFACE]\n(backend/planning/world_model.py)\n*Forward what-if simulation contract*"]
+        GROOT["NVIDIA GR00T Perception Interface [OPTIONAL / INTERFACE]\n(backend/robots/perception.py)\n*Multimodal defect classification contract*"]
+        HAL["Physical Robot HAL [OPTIONAL / INTERFACE]\n(backend/adapters/physical_adapter.py)\n*Physical AMR ROS2/HTTP adapter*"]
+        Bridge["Physical Robot Bridge [OPTIONAL / STANDALONE]\n(scripts/physical_robot_runner.py)\n*Jetson Orin / Raspberry Pi micro-bridge*"]
+        HAL -.-> Bridge
+    end
+
+    Planner -.-> Cosmos
+    Sim -.-> GROOT
+    Allocator -.-> HAL
 ```
 
 ---

@@ -53,17 +53,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             {aiMode === 'live' ? (
               <span className="flex items-center space-x-1.5 text-emerald-400 font-semibold">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>LIVE — NEBIUS TOKEN FACTORY</span>
+                <span>LIVE NEBIUS</span>
+                <span className="text-[#76b900]">NVIDIA NEMOTRON</span>
+                <span className="text-slate-400 border-l border-slate-700 pl-1.5 text-[10px] text-slate-300">
+                  nvidia/Llama-3.1-Nemotron-70B-Instruct-HF
+                </span>
               </span>
             ) : (
               <span className="flex items-center space-x-1.5 text-amber-400 font-semibold">
                 <span className="w-2 h-2 rounded-full bg-amber-400" />
-                <span>LOCAL MOCK</span>
+                <span>LOCAL SIMULATION</span>
               </span>
             )}
-            <span className="text-slate-400 border-l border-slate-700 pl-1.5 text-[10px] text-slate-300">
-              Model: nvidia/Llama-3.1-Nemotron-70B-Instruct-HF
-            </span>
           </div>
 
           <div className="flex items-center space-x-2 px-2.5 py-1 rounded bg-slate-900 border border-slate-700/60">
