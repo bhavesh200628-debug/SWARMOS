@@ -1,0 +1,80 @@
+{
+  "timestamp": 1790416938.044535,
+  "scenarios": [
+    {
+      "scenario": "Scenario 1: Normal Mission (Baseline)",
+      "mission_completed": true,
+      "replanning_needed": false,
+      "tasks_total": 4,
+      "reassignments_count": 0,
+      "failed_actions": 0,
+      "invalid_plans": 0,
+      "recovery_success": true,
+      "planning_latency_ms": 0.3,
+      "replanning_latency_ms": 0.0,
+      "model_calls": 1
+    },
+    {
+      "scenario": "Scenario 2: Robot B Failure (Hero Self-Healing)",
+      "mission_completed": true,
+      "replanning_needed": true,
+      "tasks_total": 4,
+      "reassignments_count": 1,
+      "failed_actions": 0,
+      "invalid_plans": 0,
+      "recovery_success": true,
+      "planning_latency_ms": 0.07,
+      "replanning_latency_ms": 0.09,
+      "model_calls": 2
+    },
+    {
+      "scenario": "Scenario 3: Dynamic Obstacle Incursion",
+      "mission_completed": true,
+      "replanning_needed": true,
+      "tasks_total": 4,
+      "reassignments_count": 2,
+      "failed_actions": 0,
+      "invalid_plans": 0,
+      "recovery_success": true,
+      "planning_latency_ms": 0.07,
+      "replanning_latency_ms": 0.08,
+      "model_calls": 2
+    },
+    {
+      "scenario": "Scenario 4: Critical Low Battery Recovery",
+      "mission_completed": true,
+      "replanning_needed": true,
+      "tasks_total": 4,
+      "reassignments_count": 1,
+      "failed_actions": 0,
+      "invalid_plans": 0,
+      "recovery_success": true,
+      "planning_latency_ms": 0.06,
+      "replanning_latency_ms": 0.05,
+      "model_calls": 2
+    },
+    {
+      "scenario": "Scenario 5: Multiple Simultaneous Failures",
+      "mission_completed": true,
+      "replanning_needed": true,
+      "tasks_total": 4,
+      "reassignments_count": 2,
+      "failed_actions": 0,
+      "invalid_plans": 0,
+      "recovery_success": true,
+      "planning_latency_ms": 0.06,
+      "replanning_latency_ms": 0.1,
+      "model_calls": 3
+    }
+  ],
+  "summary": {
+    "total_scenarios": 5,
+    "mission_completion_rate": 100.0,
+    "recovery_success_rate": 100.0,
+    "avg_replanning_latency_ms": 0.1,
+    "total_task_reassignments": 6,
+    "total_failed_actions": 0,
+    "total_invalid_plans": 0,
+    "total_model_calls": 10
+  }
+}
