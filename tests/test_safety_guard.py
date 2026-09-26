@@ -125,3 +125,74 @@ def test_safety_guard_rejects_obstacle_collision(sample_fleet, sample_obstacles)
     result = guard.validate_plan_actions(actions, sample_fleet, sample_obstacles)
     assert result.passed is False
     assert any("COLLISION_HAZARD" in v for v in result.violations)
+
+def test_safety_guard_rejects_capability_mismatch(sample_fleet, sample_obstacles):
+    guard = SafetyGuard()
+    # Robot A is SCOUT, should not be allowed to execute 'transport'
+    actions = [
+        AIPlanAction(
+            robot_id="robot_a",
+            action="transport",
+            target_location=Position(x=12.0, y=12.0, z=0.0)
+        )
+    ]
+    result = guard.validate_plan_actions(actions, sample_fleet, sample_obstacles)
+    assert result.passed is False
+    assert any("CAPABILITY_MISMATCH" in v for v in result.violations)
+
+def test_safety_guard_allows_low_battery_return_to_base(sample_fleet, sample_obstacles):
+    guard = SafetyGuard()
+    # Robot C has 12% battery (<20%), but return_to_base, stop, and report_status must be allowed
+    actions = [
+        AIPlanAction(
+            robot_id="robot_c",
+            action="return_to_base",
+            target_location=Position(x=2.0, y=2.0, z=0.0)
+        ),
+        AIPlanAction(
+            robot_id="robot_c",
+            action="stop",
+            target_location=Position(x=15.0, y=15.0, z=0.0)
+        ),
+        AIPlanAction(
+            robot_id="robot_c",
+            action="report_status"
+        )
+    ]
+    result = guard.validate_plan_actions(actions, sample_fleet, sample_obstacles)
+    assert result.passed is True
+    assert len(result.allowed_actions) == 3
+
+def test_safety_guard_emergency_stop_all(sample_fleet, sample_obstacles):
+    guard = SafetyGuard()
+    estop_actions = guard.emergency_stop_all(sample_fleet)
+    # Robot B is OFFLINE, so estop should target robot_a and robot_c
+    target_ids = {a.robot_id for a in estop_actions}
+    assert "robot_a" in target_ids
+    assert "robot_c" in target_ids
+    assert "robot_b" not in target_ids
+    assert all(a.action == "stop" for a in estop_actions)
+
+    # Validating the estop actions should pass
+    result = guard.validate_plan_actions(estop_actions, sample_fleet, sample_obstacles)
+    assert result.passed is True
+
+def test_safety_guard_validate_single_action(sample_fleet, sample_obstacles):
+    guard = SafetyGuard()
+    robot_a = sample_fleet["robot_a"]
+    
+    # Valid single action
+    ok, err = guard.validate_single_action(robot_a, "navigate", Position(x=5.0, y=5.0, z=0.0), sample_obstacles)
+    assert ok is True
+    assert err is None
+
+    # Invalid out of bounds
+    ok, err = guard.validate_single_action(robot_a, "navigate", Position(x=100.0, y=50.0, z=0.0), sample_obstacles)
+    assert ok is False
+    assert "out of warehouse bounds" in err
+
+    # Invalid obstacle collision
+    ok, err = guard.validate_single_action(robot_a, "navigate", Position(x=10.1, y=10.1, z=0.0), sample_obstacles)
+    assert ok is False
+    assert "collides with obstacle" in err
+

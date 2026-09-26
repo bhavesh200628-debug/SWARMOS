@@ -56,14 +56,23 @@ class SafetyGuard:
                     violations.append(f"BATTERY_CRITICAL: Robot '{robot.id}' battery at {robot.battery:.1f}% (minimum required: {self.min_battery_threshold}%).")
                     action_valid = False
 
-            # 5. Spatial Boundary Check (if destination given)
+                # 5. Capability Match Check
+                robot_caps = set(c.value if hasattr(c, "value") else str(c) for c in robot.capabilities)
+                if action.action == "inspect" and not ({"scout", "inspector"} & robot_caps):
+                    violations.append(f"CAPABILITY_MISMATCH: Robot '{robot.id}' lacks inspection sensors (has: {list(robot_caps)}).")
+                    action_valid = False
+                elif action.action == "transport" and not ({"carrier", "manipulator"} & robot_caps):
+                    violations.append(f"CAPABILITY_MISMATCH: Robot '{robot.id}' lacks transport actuator (has: {list(robot_caps)}).")
+                    action_valid = False
+
+            # 6. Spatial Boundary Check (if destination given)
             if action.target_location:
                 x, y = action.target_location.x, action.target_location.y
                 if not (self.x_bounds[0] <= x <= self.x_bounds[1] and self.y_bounds[0] <= y <= self.y_bounds[1]):
                     violations.append(f"BOUNDARY_VIOLATION: Target coordinates ({x:.2f}, {y:.2f}) exceed warehouse perimeter ({self.x_bounds}, {self.y_bounds}).")
                     action_valid = False
 
-                # 6. Obstacle Collision Check
+                # 7. Obstacle Collision Check
                 for obs in obstacles:
                     dist = math.hypot(x - obs.position.x, y - obs.position.y)
                     safe_dist = obs.radius + self.collision_margin
@@ -101,6 +110,12 @@ class SafetyGuard:
         if robot.state == RobotState.OFFLINE and action_name != "report_status":
             return False, f"Robot '{robot.id}' is OFFLINE."
 
+        robot_caps = set(c.value if hasattr(c, "value") else str(c) for c in robot.capabilities)
+        if action_name == "inspect" and not ({"scout", "inspector"} & robot_caps):
+            return False, f"Robot '{robot.id}' lacks inspection capability."
+        if action_name == "transport" and not ({"carrier", "manipulator"} & robot_caps):
+            return False, f"Robot '{robot.id}' lacks transport capability."
+
         if target_pos:
             if not (self.x_bounds[0] <= target_pos.x <= self.x_bounds[1] and self.y_bounds[0] <= target_pos.y <= self.y_bounds[1]):
                 return False, f"Location ({target_pos.x:.1f}, {target_pos.y:.1f}) is out of warehouse bounds."
@@ -111,6 +126,14 @@ class SafetyGuard:
                     return False, f"Location collides with obstacle '{obs.id}'."
 
         return True, None
+
+    def emergency_stop_all(self, robots: Dict[str, Robot]) -> List[AIPlanAction]:
+        """Generates validated emergency stop actions for all non-offline robots."""
+        return [
+            AIPlanAction(robot_id=rid, action="stop", target_location=r.position)
+            for rid, r in robots.items()
+            if r.state != RobotState.OFFLINE
+        ]
 
 # Global safety guard singleton
 safety_guard = SafetyGuard()

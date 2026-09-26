@@ -50,19 +50,29 @@ class FailureManager:
         
         # Mark robot state in fleet
         if robot_id in robots:
+            failed_bot = robots[robot_id]
+            failed_bot.target_position = None
+            failed_bot.velocity = 0.0
+            failed_bot.current_task_id = None
             if failure_type == FailureType.LOW_BATTERY:
-                robots[robot_id].state = RobotState.LOW_BATTERY
+                failed_bot.state = RobotState.LOW_BATTERY
             elif failure_type == FailureType.OBSTACLE_DETECTED:
-                robots[robot_id].state = RobotState.BLOCKED
+                failed_bot.state = RobotState.BLOCKED
             else:
-                robots[robot_id].state = RobotState.OFFLINE
+                failed_bot.state = RobotState.OFFLINE
         
         logger.warning(f"🚨 [FAILURE DETECTED] Robot {robot_id}: {failure_type.value} - {description}")
+
+        # Mark all active tasks of failed robot as ORPHANED
+        for t in active_tasks:
+            if t.assigned_robot_id == robot_id and t.status in [TaskStatus.ASSIGNED, TaskStatus.IN_PROGRESS, TaskStatus.PENDING]:
+                t.status = TaskStatus.ORPHANED
+                logger.info(f"⚠️ Task '{t.id}' orphaned due to {robot_id} failure.")
 
         # 2. REPLAN (Query NVIDIA Nemotron via Nebius)
         orphaned_tasks = [
             t.model_dump() for t in active_tasks
-            if t.assigned_robot_id == robot_id and t.status in [TaskStatus.ASSIGNED, TaskStatus.IN_PROGRESS, TaskStatus.PENDING]
+            if t.assigned_robot_id == robot_id and t.status == TaskStatus.ORPHANED
         ]
         
         fleet_dict = {rid: r.model_dump() for rid, r in robots.items()}
@@ -95,6 +105,14 @@ class FailureManager:
                         t.assigned_robot_id = reassignment.to_robot
                         t.status = TaskStatus.ASSIGNED
                         t.progress = 0.0
+                        # Update replacement robot target in simulation
+                        if reassignment.to_robot in robots:
+                            rep_bot = robots[reassignment.to_robot]
+                            rep_bot.current_task_id = t.id
+                            if t.target_location:
+                                rep_bot.target_position = t.target_location
+                                rep_bot.state = RobotState.NAVIGATING
+
                         reassigned_tasks.append({
                             "task_id": t.id,
                             "title": t.title,

@@ -7,6 +7,7 @@ import { FleetPanel } from './components/FleetPanel';
 import { DecisionTimeline } from './components/DecisionTimeline';
 import { EvaluationModal } from './components/EvaluationModal';
 import { SettingsModal } from './components/SettingsModal';
+import { WhySwarmosModal } from './components/WhySwarmosModal';
 
 export const App: React.FC = () => {
   const [wsConnected, setWsConnected] = useState(false);
@@ -27,6 +28,7 @@ export const App: React.FC = () => {
   const [isMissionLoading, setIsMissionLoading] = useState(false);
   const [evalModalOpen, setEvalModalOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [whyModalOpen, setWhyModalOpen] = useState(false);
   const [aiMode, setAiMode] = useState<'live' | 'mock'>('mock');
 
   const wsRef = useRef<WebSocket | null>(null);
@@ -165,6 +167,7 @@ export const App: React.FC = () => {
         onTriggerFailure={handleTriggerFailure}
         onResetDemo={handleResetDemo}
         onOpenEval={() => setEvalModalOpen(true)}
+        onOpenWhySwarmos={() => setWhyModalOpen(true)}
         onOpenSettings={() => setSettingsModalOpen(true)}
         isDemoRunning={isDemoRunning}
         aiMode={aiMode}
@@ -210,6 +213,7 @@ export const App: React.FC = () => {
 
       {/* Modals */}
       <EvaluationModal isOpen={evalModalOpen} onClose={() => setEvalModalOpen(false)} />
+      <WhySwarmosModal isOpen={whyModalOpen} onClose={() => setWhyModalOpen(false)} />
       <SettingsModal isOpen={settingsModalOpen} onClose={() => setSettingsModalOpen(false)} />
     </div>
   );

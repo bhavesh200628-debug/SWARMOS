@@ -42,7 +42,7 @@ export type TaskType =
   | 'report_status'
   | 'return_to_base';
 
-export type TaskStatus = 'pending' | 'assigned' | 'in_progress' | 'completed' | 'failed' | 'cancelled';
+export type TaskStatus = 'pending' | 'assigned' | 'in_progress' | 'orphaned' | 'completed' | 'failed' | 'cancelled';
 
 export interface Task {
   id: string;

@@ -22,6 +22,9 @@ class Settings(BaseModel):
     NEBIUS_BASE_URL: str = os.getenv("NEBIUS_BASE_URL", "https://api.studio.nebius.ai/v1")
     NEBIUS_API_KEY: str = os.getenv("NEBIUS_API_KEY", "")
     
+    # Optional Tavily API for incident context retrieval
+    TAVILY_API_KEY: str = os.getenv("TAVILY_API_KEY", "")
+    
     # NVIDIA Nemotron Model Selection
     # Default: NVIDIA Llama-3.1-Nemotron-70B-Instruct-HF
     # Fallback/Fast: nvidia/nemotron-mini-4b-instruct

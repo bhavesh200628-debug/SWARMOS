@@ -22,6 +22,9 @@ class NebiusClient:
         self.fallback_model = settings.NEBIUS_FALLBACK_MODEL
         self.mock_mode = settings.MOCK_AI
         
+        self.last_success: Optional[float] = None
+        self.last_latency: Optional[float] = None
+        
         # Verify initial operational mode
         if not self.api_key:
             self.mock_mode = True
@@ -104,6 +107,8 @@ class NebiusClient:
                     choice = data["choices"][0]
                     content = choice["message"]["content"]
                     usage = data.get("usage", {})
+                    self.last_success = time.time()
+                    self.last_latency = latency_ms
                     
                     return {
                         "content": content,
@@ -124,6 +129,8 @@ class NebiusClient:
                     fb_latency_ms = (time.time() - start_time) * 1000.0
                     if fb_response.status_code == 200:
                         fb_data = fb_response.json()
+                        self.last_success = time.time()
+                        self.last_latency = fb_latency_ms
                         return {
                             "content": fb_data["choices"][0]["message"]["content"],
                             "model": fb_data.get("model", self.fallback_model),

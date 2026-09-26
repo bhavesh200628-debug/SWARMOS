@@ -17,9 +17,16 @@ from backend.planning.failure_manager import FailureManager
 from backend.safety.guard import SafetyGuard
 from backend.nebius.nemotron_reasoner import nemotron_reasoner
 
+from backend.nebius.client import nebius_client
+
 class SwarmEvaluator:
-    def __init__(self):
+    def __init__(self, mode: str = "auto"):
         self.safety_guard = SafetyGuard()
+        if mode == "auto":
+            is_live = bool(nebius_client.api_key) and not nebius_client.mock_mode
+            self.mode = "live" if is_live else "local"
+        else:
+            self.mode = mode
 
     async def run_scenario_1_normal(self) -> Dict[str, Any]:
         """Scenario 1: Standard mission execution without failures."""
@@ -246,8 +253,11 @@ class SwarmEvaluator:
 
         return {
             "timestamp": time.time(),
+            "mode": self.mode,
+            "benchmark_type": "LIVE_NEBIUS_TOKEN_FACTORY" if self.mode == "live" else "LOCAL_DETERMINISTIC_SIMULATION",
             "scenarios": results,
             "summary": {
+                "benchmark_type": "LIVE_NEBIUS_TOKEN_FACTORY" if self.mode == "live" else "LOCAL_DETERMINISTIC_SIMULATION",
                 "total_scenarios": total_scenarios,
                 "mission_completion_rate": round((completed_scenarios / total_scenarios) * 100.0, 1),
                 "recovery_success_rate": round((recovery_successes / total_scenarios) * 100.0, 1),

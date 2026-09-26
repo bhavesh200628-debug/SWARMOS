@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  swarmos:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: swarmos:latest
+    container_name: swarmos-app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - NEBIUS_BASE_URL=${NEBIUS_BASE_URL:-https://api.studio.nebius.ai/v1}
+      - NEBIUS_API_KEY=${NEBIUS_API_KEY:-}
+      - NEBIUS_MODEL=${NEBIUS_MODEL:-nvidia/Llama-3.1-Nemotron-70B-Instruct-HF}
+      - NEBIUS_FALLBACK_MODEL=${NEBIUS_FALLBACK_MODEL:-nvidia/nemotron-mini-4b-instruct}
+      - MOCK_AI=${MOCK_AI:-false}
+      - SWARMOS_HOST=0.0.0.0
+      - SWARMOS_PORT=8000
+      - TAVILY_API_KEY=${TAVILY_API_KEY:-}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

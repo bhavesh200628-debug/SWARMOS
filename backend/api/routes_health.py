@@ -29,6 +29,12 @@ async def health_ai():
     is_live = not nebius_client.mock_mode and bool(nebius_client.api_key)
     return {
         "status": "operational",
+        "provider": "Nebius Token Factory",
+        "model": settings.NEBIUS_MODEL,
+        "mode": "LIVE — NEBIUS TOKEN FACTORY" if is_live else "LOCAL MOCK",
+        "configured": bool(settings.NEBIUS_API_KEY),
+        "last_success": nebius_client.last_success,
+        "last_latency": nebius_client.last_latency,
         "nebius_endpoint": settings.NEBIUS_BASE_URL,
         "target_model": settings.NEBIUS_MODEL,
         "fallback_model": settings.NEBIUS_FALLBACK_MODEL,

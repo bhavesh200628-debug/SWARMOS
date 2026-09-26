@@ -63,10 +63,17 @@ class NemotronReasoner:
             for r in fleet_dict.values()
         ]
 
+        # Check if optional Tavily safety context is available
+        from backend.planning.tavily_context import tavily_retriever
+        tavily_ctx = await tavily_retriever.get_incident_safety_context(mission_prompt)
+        effective_prompt = mission_prompt
+        if tavily_ctx and tavily_ctx.get("answer"):
+            effective_prompt = f"{mission_prompt}\nRegulatory Incident Context (Tavily): {tavily_ctx['answer']}"
+
         # Check if live Nebius inference should be used
         if not self.client.mock_mode and self.client.api_key:
             prompt = MISSION_DECOMPOSITION_PROMPT_TEMPLATE.format(
-                mission_prompt=mission_prompt,
+                mission_prompt=effective_prompt,
                 fleet_state_json=json.dumps(fleet_summary, indent=2)
             )
             messages = [

@@ -1,11 +1,19 @@
 # SWARMOS Empirical Evaluation Report
 
 **Generated Benchmark Evaluation for Nebius x NVIDIA Hackathon 2026**
+**Benchmark Execution Profile**: `LOCAL DETERMINISTIC SIMULATION`
+
+> [!IMPORTANT]
+> **Performance Transparency**:
+> - **Local Simulation Mode**: Measures deterministic local simulation execution loop time (<1ms per cycle).
+> - **Live Nebius Inference Mode**: Measures actual network request time and GPU token generation latency (~100–350ms) on Nebius Token Factory clusters.
+> - The two execution modes are strictly separated in `evaluation/local_results.json` and `evaluation/live_results.json`.
 
 ## Aggregate Metrics
 
 | Metric | Measured Value | Target | Status |
 |---|---|---|---|
+| **Benchmark Mode** | **LOCAL DETERMINISTIC SIMULATION** | Transparent | VERIFIED |
 | **Mission Completion Rate** | **100.0%** | > 95% | PASS |
 | **Self-Healing Recovery Rate** | **100.0%** | 100% | PASS |
 | **Mean Replanning Latency** | **0.1 ms** | < 500 ms | PASS |

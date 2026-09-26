@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, AlertTriangle, RotateCcw, Cpu, BarChart3, Settings as SettingsIcon, Radio } from 'lucide-react';
+import { Play, AlertTriangle, RotateCcw, Cpu, BarChart3, Settings as SettingsIcon, Radio, Zap } from 'lucide-react';
 
 interface NavbarProps {
   wsConnected: boolean;
@@ -7,6 +7,7 @@ interface NavbarProps {
   onTriggerFailure: () => void;
   onResetDemo: () => void;
   onOpenEval: () => void;
+  onOpenWhySwarmos: () => void;
   onOpenSettings: () => void;
   isDemoRunning: boolean;
   aiMode: string;
@@ -18,6 +19,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onTriggerFailure,
   onResetDemo,
   onOpenEval,
+  onOpenWhySwarmos,
   onOpenSettings,
   isDemoRunning,
   aiMode
@@ -47,10 +49,20 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="hidden lg:flex items-center space-x-3 ml-6 pl-6 border-l border-slate-800 text-xs font-mono">
           <div className="flex items-center space-x-2 px-2.5 py-1 rounded bg-slate-900 border border-slate-700/60">
             <Cpu className="w-3.5 h-3.5 text-[#76b900]" />
-            <span className="text-slate-300">Model:</span>
-            <span className="text-white font-semibold">NVIDIA Nemotron 70B</span>
-            <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-900/60 text-emerald-300 border border-emerald-700/40">
-              {aiMode === 'live' ? 'NEBIUS LIVE' : 'DETERMINISTIC'}
+            <span className="text-slate-400">AI ENGINE:</span>
+            {aiMode === 'live' ? (
+              <span className="flex items-center space-x-1.5 text-emerald-400 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>LIVE — NEBIUS TOKEN FACTORY</span>
+              </span>
+            ) : (
+              <span className="flex items-center space-x-1.5 text-amber-400 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-amber-400" />
+                <span>LOCAL MOCK</span>
+              </span>
+            )}
+            <span className="text-slate-400 border-l border-slate-700 pl-1.5 text-[10px] text-slate-300">
+              Model: nvidia/Llama-3.1-Nemotron-70B-Instruct-HF
             </span>
           </div>
 
@@ -95,6 +107,15 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">RESET</span>
+        </button>
+
+        <button
+          onClick={onOpenWhySwarmos}
+          title="Why SWARMOS? Fleet-level intelligence vs single-robot AI"
+          className="flex items-center space-x-1.5 px-3 py-2 rounded bg-emerald-950/40 hover:bg-emerald-900/60 text-[#76b900] border border-[#76b900]/40 text-xs font-semibold transition active:scale-95"
+        >
+          <Zap className="w-3.5 h-3.5 text-[#76b900]" />
+          <span className="hidden md:inline">WHY SWARMOS?</span>
         </button>
 
         <button

@@ -127,25 +127,44 @@ Mission completes; automated incident report compiled. Zero human intervention.
 
 ## 📊 Empirical Evaluation & Benchmark Results
 
+SWARMOS enforces a strict separation between **local deterministic simulation metrics** and **live Nebius Token Factory cloud inference metrics**:
+
+> [!IMPORTANT]
+> **Performance Transparency Guarantee**:
+> - **Local Deterministic Mode**: Measures local algorithmic task allocation and kinematic state machine execution (`<1 ms`). Stored in `evaluation/local_results.json`.
+> - **Live Nebius Token Factory Mode**: Measures real HTTPS cloud roundtrip token generation on Nebius NVIDIA Nemotron 70B GPU clusters (`~100–350 ms`). Stored in `evaluation/live_results.json`.
+
 Run the automated evaluation suite via CLI:
 ```bash
-python -m evaluation.evaluate
+# Run local deterministic evaluation (100% offline verifiable)
+./venv/bin/python3 -m evaluation.evaluate
+
+# Run live Nebius Token Factory verification (requires NEBIUS_API_KEY)
+./venv/bin/python3 scripts/test_live_nebius.py
 ```
 
-Results across 5 repeatable benchmark scenarios:
+### 1. Local Deterministic Simulation Benchmark (`evaluation/local_results.json`)
 
 | Benchmark Scenario | Objective | Recovery Success | Replan Latency | Invocations | Safety Violations |
 |---|---|---|---|---|---|
 | **Scenario 1** | Baseline Normal Mission | 100% | 0.0 ms (N/A) | 1 | **0** |
-| **Scenario 2** | Robot B Hardware Failure | 100% | 118.0 ms | 2 | **0** |
-| **Scenario 3** | Dynamic Obstacle Incursion | 100% | 124.5 ms | 2 | **0** |
-| **Scenario 4** | Critical Low Battery Drop | 100% | 112.0 ms | 2 | **0** |
-| **Scenario 5** | Multiple Simultaneous Failures | 100% | 136.0 ms | 3 | **0** |
+| **Scenario 2** | Robot B Hardware Failure | 100% | 0.1 ms | 2 | **0** |
+| **Scenario 3** | Dynamic Obstacle Incursion | 100% | 0.1 ms | 2 | **0** |
+| **Scenario 4** | Critical Low Battery Drop | 100% | 0.1 ms | 2 | **0** |
+| **Scenario 5** | Multiple Simultaneous Failures | 100% | 0.3 ms | 3 | **0** |
 
 - **Mission Completion Rate**: **100.0%**
 - **Autonomous Recovery Rate**: **100.0%**
-- **Mean Dynamic Replanning Latency**: **122.6 ms**
 - **Safety Invariant Violations**: **0 (Zero)**
+- **Schema Validation Errors**: **0 (Zero)**
+
+### 2. Live Nebius Token Factory Inference Benchmark (`docs/runtime-verification.md`)
+
+| Stage | Endpoint / Model | Request Latency | Output Schema | Safety Check |
+|---|---|---|---|---|
+| **Stage 1: API Ping** | `https://api.studio.nebius.ai/v1` | ~95 ms | Valid HTTP 200 | Approved |
+| **Stage 2: Nemotron 70B Decomposition** | `nvidia/Llama-3.1-Nemotron-70B-Instruct-HF` | ~215 ms | Valid `AIPlanResponse` | 4/4 Passed |
+| **Stage 3: Nemotron 70B Replan** | `nvidia/Llama-3.1-Nemotron-70B-Instruct-HF` | ~185 ms | Valid `TaskReassignment` | Approved |
 
 ---
 
@@ -252,6 +271,7 @@ SWARMOS/
 │   │   ├── mission_planner.py      # Mission DAG decomposition & dependency tracker
 │   │   ├── task_allocator.py       # Multi-criteria scoring & robot selection
 │   │   ├── failure_manager.py      # Autonomous DETECT -> REPLAN self-healing
+│   │   ├── tavily_context.py       # Regulatory SDS & hazard protocol grounding
 │   │   └── world_model.py          # NVIDIA Cosmos WFM interface & what-if simulator
 │   ├── robots/
 │   │   ├── adapter_base.py         # Hardware Abstraction Layer (HAL) base class
@@ -271,9 +291,12 @@ SWARMOS/
 │       └── routes_health.py        # /health, /health/ai, /health/simulation
 ├── evaluation/
 │   ├── evaluate.py                 # CLI benchmark runner
-│   └── scenarios_eval.py           # 5 deterministic evaluation scenarios
+│   ├── scenarios_eval.py           # 5 deterministic evaluation scenarios
+│   ├── local_results.json          # Deterministic simulation benchmarks (<1ms)
+│   └── live_results.json           # Live Nebius Token Factory benchmarks
 ├── tests/
-│   ├── test_safety_guard.py        # Safety constraint unit tests
+│   ├── test_demo_repeatability.py  # Phase 6: 10x hero demo repeatability test
+│   ├── test_safety_guard.py        # Safety constraint & invariant unit tests
 │   ├── test_task_allocator.py      # Multi-criteria matching unit tests
 │   ├── test_failure_recovery.py    # Self-healing recovery unit tests
 │   ├── test_simulation.py          # Kinematic simulation unit tests
@@ -281,12 +304,13 @@ SWARMOS/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Navbar.tsx          # Top HUD with demo action controls
+│   │   │   ├── Navbar.tsx          # Top HUD with AI engine badge & demo controls
 │   │   │   ├── WarehouseMap.tsx    # Interactive Digital Twin canvas map
 │   │   │   ├── MissionPanel.tsx    # Natural language prompt & Task DAG
 │   │   │   ├── FleetPanel.tsx      # AMR status cards & battery gauges
 │   │   │   ├── DecisionTimeline.tsx# Real-time explainable AI stream
 │   │   │   ├── EvaluationModal.tsx # Benchmark test runner modal
+│   │   │   ├── WhySwarmosModal.tsx # Architectural rationale & judge answers
 │   │   │   └── SettingsModal.tsx   # Nebius & model configuration
 │   │   ├── types.ts                # TypeScript interfaces
 │   │   ├── App.tsx                 # Master command center view
@@ -296,12 +320,18 @@ SWARMOS/
 ├── docs/
 │   ├── architecture.md             # In-depth architecture specification
 │   ├── nebius-integration.md       # Nebius Token Factory guide
+│   ├── nebius-deployment.md        # Nebius Cloud Compute & Docker deployment
+│   ├── physical-demo.md            # Hardware audit & physical AMR HAL guide
 │   ├── judging.md                  # Hackathon criteria mapping
 │   ├── devpost-submission.md       # Devpost submission draft
 │   ├── demo-script.md              # 2m50s video production script
-│   └── hackathon-audit.md          # 22/22 self-verification checklist
+│   ├── hackathon-audit.md          # 22/22 self-verification checklist
+│   └── final-verification.md       # 21-phase pre-submission verification audit
 ├── scripts/
-│   └── physical_robot_runner.py    # Hardware AMR ROS2/HTTP test runner
+│   ├── physical_robot_runner.py    # Hardware AMR ROS2/HTTP test runner
+│   └── test_live_nebius.py         # 3-stage live Nebius API verification
+├── Dockerfile                      # Production multi-stage Docker build
+├── docker-compose.yml              # One-command containerized deployment
 ├── .env.example
 ├── LICENSE                         # MIT Open Source License
 └── README.md

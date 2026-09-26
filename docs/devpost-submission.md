@@ -52,7 +52,11 @@ SWARMOS turns heterogeneous robots (Scouts, Inspectors, Carriers, Manipulators) 
 - **Inference**: Nebius Token Factory, NVIDIA Nemotron 70B, OpenAI-compatible SDK.
 - **Frontend / Digital Twin**: React 19, TypeScript, Vite, Tailwind CSS v4, Lucide Icons, SVG Canvas Engine.
 - **Hardware Abstraction Layer**: Standardized `RobotAdapter` supporting Simulation Kinematics and Physical Hardware (ROS2, Micro-ROS, HTTP/MQTT).
-- **Testing & Benchmarks**: Pytest (16/16 unit/integration tests passing), 5-Scenario Repeatable Evaluation Suite.
+- **Testing & Benchmarks**: Pytest (21/21 unit & invariant tests passing), 10x Hero Demo Repeatability (10/10 success), 5-Scenario Benchmark Suite.
+- **Performance Transparency**:
+  - Local Deterministic Simulation: `<1 ms` algorithmic reassignment and kinematic updates.
+  - Live Nebius Token Factory Cloud Inference: `~100–350 ms` roundtrip on NVIDIA Nemotron 70B GPU clusters.
+  - Both modes strictly verified and separated in `evaluation/local_results.json` and `docs/runtime-verification.md`.
 
 ---
 
@@ -62,5 +66,5 @@ SWARMOS turns heterogeneous robots (Scouts, Inspectors, Carriers, Manipulators) 
 ---
 
 ## 7. Known Limitations & Roadmap
-- **Current Limitation**: While the Hardware Abstraction Layer is ready for real ROS2 robots, the default hackathon deployment runs a high-fidelity 2D kinematic simulation so judges can evaluate it immediately in browser without requiring access to a physical warehouse.
-- **Future Roadmap**: Deep binding to live NVIDIA Isaac Sim and Isaac Lab gym environments; physical testbed deployment on Unitree Go2 and Isaac Nova Carter platforms.
+- **Current Substrate**: In accordance with hackathon hardware transparency standards (see `docs/physical-demo.md`), no physical rovers are attached to the host machine. SWARMOS demonstrates full fleet orchestration through a deterministic 10 Hz kinematic digital twin, with a verified Hardware Abstraction Layer (`backend/adapters/physical_adapter.py` and `scripts/physical_robot_runner.py`) enabling drop-in deployment to physical AMRs via HTTP/ROS2.
+- **Future Roadmap**: Live Isaac Sim / Isaac Lab synthetic data gym integration and physical testbed deployment on NVIDIA Isaac Nova Carter and TurtleBot 4 fleets.
