@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Cpu, Key, CheckCircle2 } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -11,7 +12,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
 
   useEffect(() => {
     if (isOpen) {
-      fetch('/health/ai')
+      fetch(`${API_BASE_URL}/health/ai`)
         .then((res) => res.json())
         .then((data) => setAiInfo(data))
         .catch((err) => console.error(err));

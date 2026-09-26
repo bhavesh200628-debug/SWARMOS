@@ -13,6 +13,7 @@ router = APIRouter(tags=["health"])
 server_start_time = time.time()
 
 @router.get("/health")
+@router.get("/api/health")
 async def health_check():
     """General system health and service metadata."""
     return {

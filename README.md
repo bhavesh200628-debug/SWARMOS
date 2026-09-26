@@ -337,6 +337,7 @@ SWARMOS/
 │   └── package.json
 ├── docs/
 │   ├── architecture.md             # In-depth architecture specification
+│   ├── deployment.md               # Production deployment guide (Vercel + Docker)
 │   ├── nebius-integration.md       # Nebius Token Factory guide
 │   ├── nebius-deployment.md        # Nebius Cloud Compute & Docker deployment
 │   ├── physical-demo.md            # Hardware audit & physical AMR HAL guide
@@ -344,7 +345,8 @@ SWARMOS/
 │   ├── devpost-submission.md       # Devpost submission draft
 │   ├── demo-script.md              # 2m50s video production script
 │   ├── hackathon-audit.md          # 22/22 self-verification checklist
-│   └── final-verification.md       # 21-phase pre-submission verification audit
+│   ├── final-verification.md       # 21-phase pre-submission verification audit
+│   └── submission-readiness.md     # Pre-submission evidence and readiness audit
 ├── scripts/
 │   ├── physical_robot_runner.py    # Hardware AMR ROS2/HTTP test runner
 │   └── test_live_nebius.py         # 3-stage live Nebius API verification

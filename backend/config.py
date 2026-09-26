@@ -19,8 +19,11 @@ class Settings(BaseModel):
     
     # Nebius Token Factory & AI Inference
     # Official Nebius Token Factory API base URL
-    NEBIUS_BASE_URL: str = os.getenv("NEBIUS_BASE_URL", "https://api.studio.nebius.ai/v1")
+    NEBIUS_BASE_URL: str = os.getenv("NEBIUS_BASE_URL", "https://api.tokenfactory.nebius.com/v1")
     NEBIUS_API_KEY: str = os.getenv("NEBIUS_API_KEY", "")
+    
+    # CORS Origins (comma-separated for production: e.g. "https://swarmos.vercel.app,https://yourdomain.com")
+    CORS_ORIGINS: str = os.getenv("CORS_ORIGINS", "*")
     
     # Optional Tavily API for incident context retrieval
     TAVILY_API_KEY: str = os.getenv("TAVILY_API_KEY", "")
@@ -53,4 +56,11 @@ class Settings(BaseModel):
         "return_to_base"
     ]
 
+    @property
+    def allowed_origins(self) -> list:
+        if not self.CORS_ORIGINS or self.CORS_ORIGINS.strip() == "*":
+            return ["*"]
+        return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
+
 settings = Settings()
+

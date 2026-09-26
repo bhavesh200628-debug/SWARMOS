@@ -8,6 +8,7 @@ import { DecisionTimeline } from './components/DecisionTimeline';
 import { EvaluationModal } from './components/EvaluationModal';
 import { SettingsModal } from './components/SettingsModal';
 import { WhySwarmosModal } from './components/WhySwarmosModal';
+import { API_BASE_URL, getWebSocketUrl } from './config';
 
 export const App: React.FC = () => {
   const [wsConnected, setWsConnected] = useState(false);
@@ -36,7 +37,7 @@ export const App: React.FC = () => {
   // Fetch initial state & AI health
   const fetchState = async () => {
     try {
-      const res = await fetch('/health/ai');
+      const res = await fetch(`${API_BASE_URL}/health/ai`);
       if (res.ok) {
         const data = await res.json();
         setAiMode(data.is_mock ? 'mock' : 'live');
@@ -55,10 +56,7 @@ export const App: React.FC = () => {
     let reconnectTimer: any = null;
 
     const connectWebSocket = () => {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const host = window.location.port === '5173' ? 'localhost:8000' : window.location.host;
-      const wsUrl = `${protocol}//${host}/ws/telemetry`;
-
+      const wsUrl = getWebSocketUrl();
       console.log('Connecting to SWARMOS Telemetry:', wsUrl);
       const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
@@ -103,7 +101,7 @@ export const App: React.FC = () => {
   const handleRunDemo = async () => {
     setIsDemoRunning(true);
     try {
-      await fetch('/api/demo/run', { method: 'POST' });
+      await fetch(`${API_BASE_URL}/api/demo/run`, { method: 'POST' });
     } catch (err) {
       console.error('Demo run trigger failed', err);
     } finally {
@@ -113,7 +111,7 @@ export const App: React.FC = () => {
 
   const handleTriggerFailure = async () => {
     try {
-      await fetch('/api/demo/failure', { method: 'POST' });
+      await fetch(`${API_BASE_URL}/api/demo/failure`, { method: 'POST' });
     } catch (err) {
       console.error('Failure trigger failed', err);
     }
@@ -121,7 +119,7 @@ export const App: React.FC = () => {
 
   const handleTriggerRobotFailure = async (robotId: string) => {
     try {
-      await fetch(`/api/robots/${robotId}/failure`, {
+      await fetch(`${API_BASE_URL}/api/robots/${robotId}/failure`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -137,7 +135,7 @@ export const App: React.FC = () => {
   const handleResetDemo = async () => {
     setIsDemoRunning(false);
     try {
-      await fetch('/api/demo/reset', { method: 'POST' });
+      await fetch(`${API_BASE_URL}/api/demo/reset`, { method: 'POST' });
     } catch (err) {
       console.error('Reset trigger failed', err);
     }
@@ -146,7 +144,7 @@ export const App: React.FC = () => {
   const handleSubmitMission = async (prompt: string) => {
     setIsMissionLoading(true);
     try {
-      await fetch('/api/missions', {
+      await fetch(`${API_BASE_URL}/api/missions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt }),

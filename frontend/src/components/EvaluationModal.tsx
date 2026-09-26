@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Play, CheckCircle2, BarChart2, ShieldCheck } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 interface EvaluationModalProps {
   isOpen: boolean;
@@ -15,7 +16,7 @@ export const EvaluationModal: React.FC<EvaluationModalProps> = ({ isOpen, onClos
   const runEvaluation = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/evaluate', { method: 'POST' });
+      const res = await fetch(`${API_BASE_URL}/api/evaluate`, { method: 'POST' });
       if (res.ok) {
         const data = await res.json();
         setResults(data);

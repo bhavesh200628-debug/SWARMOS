@@ -59,3 +59,8 @@ def test_evaluate_endpoint():
     assert "scenarios" in data
     assert len(data["scenarios"]) == 5
     assert data["summary"]["mission_completion_rate"] == 100.0
+
+def test_websocket_telemetry_endpoint():
+    with client.websocket_connect("/ws/telemetry") as ws:
+        ws.send_text("ping")
+        assert ws is not None
