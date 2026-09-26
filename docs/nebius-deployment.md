@@ -39,7 +39,7 @@ This guide details how to deploy and operate SWARMOS on **Nebius AI Cloud Comput
 
 ### Step 1: Clone Repository
 ```bash
-git clone https://github.com/bhavesh-suthar/SWARMOS.git
+git clone https://github.com/bhavesh200628-debug/SWARMOS.git
 cd SWARMOS
 ```
 

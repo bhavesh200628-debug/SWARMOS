@@ -194,7 +194,7 @@ When `NEBIUS_API_KEY` is configured, live cloud inference runs on Nebius Token F
 
 ### 1. Clone & Set Up Virtual Environment
 ```bash
-git clone https://github.com/your-repo/SWARMOS.git
+git clone https://github.com/bhavesh200628-debug/SWARMOS.git
 cd SWARMOS
 
 # Create and activate Python virtual environment
@@ -202,7 +202,7 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Install backend dependencies
-pip install fastapi uvicorn pydantic httpx websockets pytest pytest-asyncio python-dotenv
+pip install -r requirements.txt
 ```
 
 ### 2. Configure Environment Variables

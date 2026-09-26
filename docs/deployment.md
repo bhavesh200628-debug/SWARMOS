@@ -122,7 +122,7 @@ SWARMOS ships with an optimized multi-stage `Dockerfile` and `docker-compose.yml
 #### Step 1: Clone and Configure Environment
 On your server (Nebius Compute VM, Ubuntu 22.04+, Debian, or cloud host):
 ```bash
-git clone https://github.com/bhavesh-suthar/SWARMOS.git
+git clone https://github.com/bhavesh200628-debug/SWARMOS.git
 cd SWARMOS
 cp .env.example .env
 ```
