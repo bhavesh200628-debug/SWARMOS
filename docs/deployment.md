@@ -57,6 +57,13 @@ SWARMOS employs a cloud-native, decoupled edge/cloud architecture engineered for
 
 ## 2. Frontend Deployment (Vercel)
 
+### Live Verified Vercel Deployment
+* **Production Alias URL**: [https://swarmos-alpha.vercel.app](https://swarmos-alpha.vercel.app)
+* **Direct Deployment URL**: [https://swarmos-hggbvhi4b-bhavesh200628-debugs-projects.vercel.app](https://swarmos-hggbvhi4b-bhavesh200628-debugs-projects.vercel.app)
+* **Project Name**: `swarmos`
+* **Vercel Scope/Team**: `bhavesh200628-debugs-projects`
+* **Status**: `DEPLOYED & OPERATIONAL (HTTP 200)`
+
 ### Step 1: Configure Vercel Project
 1. Push repository to GitHub or GitLab.
 2. In the Vercel Dashboard, select **Add New Project** and import the repository.
